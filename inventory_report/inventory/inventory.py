@@ -3,6 +3,7 @@ from inventory_report.reports.complete_report import CompleteReport
 
 import csv
 import json
+import xml.etree.ElementTree as ET
 
 
 class Inventory:
@@ -23,9 +24,25 @@ class Inventory:
             elif report_type == "completo":
                 return CompleteReport.generate(list(data))
 
+    def read_xml(path, report_type):
+        tree = ET.parse(path)
+        root = tree.getroot()
+        products_list = []
+        for element in root.findall("*"):
+            product_dict = {}
+            for child in element:
+                product_dict[child.tag] = child.text
+            products_list.append(product_dict)
+        if report_type == "simples":
+            return SimpleReport.generate(products_list)
+        elif report_type == "completo":
+            return CompleteReport.generate(products_list)
+
     @classmethod
     def import_data(self, path, report_type):
         if "csv" in path:
             return self.read_csv(path, report_type)
         elif "json" in path:
             return self.read_json(path, report_type)
+        elif "xml" in path:
+            return self.read_xml(path, report_type)
