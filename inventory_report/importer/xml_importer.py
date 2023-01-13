@@ -2,6 +2,7 @@ from inventory_report.importer.importer import Importer
 
 import xml.etree.ElementTree as ET
 
+
 class XmlImporter(Importer):
     @staticmethod
     def import_data(path):
